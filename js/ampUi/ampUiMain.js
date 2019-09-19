@@ -157,9 +157,6 @@ ampUi.navigationController.meterMain.render = function(contextThis) {
 })();
 // -- Meter  
 
-
-
-
 // ++ Hint 
 ampUi.navigationController.hint = {};
 ampUi.navigationController.hint.id = "navigation-hint";

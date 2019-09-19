@@ -1,15 +1,22 @@
 ampUi.FiltersGraph = function(controllersContext) {
 	var _controllersContext = controllersContext; // Global context
+
 	var _graphContext = this;
 	this.containerJq =  $("#" + ampUi.filtersGraphSettings.htmlContainerId);
+	$(this.containerJq).width($(window).width());
+	$(this.containerJq).height($(window).height()-30);
+	_graphContext.containerWidth = $(window).width();
+	_graphContext.containerHeight = $(window).height()-30;
+
 	this.containerWidth = $(this.containerJq).width(); // Overall width and height
 	this.containerHeight = $(this.containerJq).height();
+
 	this.konvaStage = new Konva.Stage({ // Main konva stage 
 		container: ampUi.filtersGraphSettings.htmlContainerId,
 		width: _graphContext.containerWidth,
 		height: _graphContext.containerHeight
-    });
-    console.log('stage = 7');
+	});
+	
 	this.scaleLayer = new Konva.FastLayer();
 	this.konvaStage.add(this.scaleLayer);
 	this.circleSize = this.containerHeight * (ampUi.filtersGraphSettings.circleSizeCoefficient / 100); // Circle with number diameter
@@ -237,11 +244,6 @@ ampUi.FiltersGraph = function(controllersContext) {
 	
 	this.filterValueChanged = {};
 	//this.selectedController = null;
-	
-	
-	
-	
-
 	
 	this.extend = function(index) {
 		var controller = _controllersContext.controllers[index];

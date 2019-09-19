@@ -47,8 +47,10 @@ var lostConnectionAtTryNum=0;
 var GIsTouch;
 var ServerUrl = window.location.href;
 var bSelectedMix = true;
-var modal = document.querySelector(".modal");
-var closeButton = document.querySelector(".close-button");
+var modal;
+var modalcontent;
+var span;
+var selEqIndex = -1;
 
 // INITIALIZATION
 function init(){			
@@ -61,7 +63,9 @@ function init(){
 	}else{
 		ie10="0";
 	}
-
+	
+	modal = document.getElementById("eqModal");	
+	modalcontent = document.getElementById("eqModalContent");
 	GWorkersNotSupported = false;	
 	
 	
@@ -110,7 +114,12 @@ function init(){
 	// Initialize Channels request	
 	data1 = HTTPRequestSend(ServerUrl + "?" + "status" + "=" + "init&sessionid=" + GSessionID + HTTPRequestAntiCache());
 	InitChannels(data1);
-	
+	span = document.getElementsByClassName("close")[0];
+	span.onclick = function() {
+		GEq[selEqIndex] = ampUi.globalSettings.filtersControllersContext;
+		selEqIndex = -1;
+		modal.style.display = "none";
+	};
 	// Adjust header width
 	//nowrapper1 = document.getElementById("ClassNoWrapper");
 	//nowrapper1.style.width = 80 * GChannelCount + "px";	
@@ -171,6 +180,7 @@ function InitChannels(data){
 	GEq = [];
 	type1= WebqueryVariableValue(data,"only"); 
 	for (var i = 0; i < GChannelCount; i++){
+		
 		caption1 = WebqueryVariableValue(data, "caption" + i);
 		type1 = WebqueryVariableValue(data, "type" + i);
 		pan1 = WebqueryVariableValue(data, "pan" + i);
@@ -180,6 +190,7 @@ function InitChannels(data){
 			panbool1 = false;
 		else
 			panbool1 = true;			
+		
 		AddChannel(i, caption1, type1, panbool1, colr, chnum);        
 
 		GEq[i] = {
@@ -200,8 +211,7 @@ function InitChannels(data){
 			},
 			active: true 
 		};
-    }
-    
+	}
 	 resizeFunc();    
 }
 
@@ -222,9 +232,16 @@ function AddChannel(channelnumber, channelcaption, channeltype, showpan, colr, c
 	eqbutton1.addEventListener('click', function(event){
 		if (event.target.getAttribute('class')=="eq_button"){
 			var index = event.target.getAttribute('index');
-			
-			toggleModal();
+			selEqIndex = index;
 
+			modal.style.width = document.documentElement.clientWidth + "px";
+			modal.style.height = document.documentElement.clientHeight + "px";
+			modalcontent.style.width = document.documentElement.clientWidth + "px";
+			modalcontent.style.height = document.documentElement.clientHeight + "px";
+			ampUi.globalSettings.filtersControllersContext = GEq[index];
+
+			ampUi.channelEdit( ampUi.globalSettings.filtersControllersContext, null, null,	null, null);		
+			modal.style.display = "block";
 		}
 	});	
 	console1.appendChild(eqbutton1);
@@ -375,8 +392,8 @@ function AddChannel(channelnumber, channelcaption, channeltype, showpan, colr, c
 	var channelnum1 = document.createElement("div");
 	channelnum1.id = "ClassChannelNum" + channelnumber;
 	channelnum1.className = "channel_num";
+	channelnum1.innerHTML = channelnumber+1;
 	console1.appendChild(channelnum1);
-	channelnum1.innerHTML = chnum;
 	
 	// Slider has references to other related elements that are used in slider Events 
 	slider1.customBar = bar1.id;
@@ -1160,13 +1177,14 @@ function resizeFunc() {
             document.getElementById('mr' + i).style.height = theight + 'px';            
         }
 
-        var wWidth = GChannelCount * document.getElementById("ClassConsole0").offsetWidth;
-
+		var wWidth = GChannelCount * document.getElementById("ClassConsole0").offsetWidth;
+		
+		if (selEqIndex > -1){
+			modal.style.width = document.documentElement.clientWidth + "px";
+			modal.style.height = document.documentElement.clientHeight + "px";
+			modalcontent.style.width = document.documentElement.clientWidth + "px";
+			modalcontent.style.height = document.documentElement.clientHeight + "px";			
+			ampUi.channelEdit( ampUi.globalSettings.filtersControllersContext, null, null,	null, null);		
+		}
 	}
 }
-
-function toggleModal() {
-    modal.classList.toggle("show-modal");
-}
-
-closeButton.addEventListener("click", toggleModal);

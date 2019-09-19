@@ -36,7 +36,7 @@ ampUi.channelEdit = function(
             filtersControllersContext.controllers[item].eventsContext.triggerQualityChanged = function () { for (var item in this.qualityChanged) this.qualityChanged[item](); }
             filtersControllersContext.controllers[item].eventsContext.triggerStateChanged = function () { for (var item in this.stateChanged) this.stateChanged[item](); }
 		}
-		// -- Instantiate filters controllers 
+		// -- Instantiate filters controllers 	
 		var filtersList = new ampUi.FiltersList(filtersControllersContext);
 		var filtersGraph = new ampUi.FiltersGraph(filtersControllersContext);
 		var filtersDeck = new ampUi.FiltersDeck(filtersControllersContext);

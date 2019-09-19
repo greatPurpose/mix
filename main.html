@@ -10,12 +10,20 @@
     <meta http-equiv="cleartype" content="on">
 
     <link rel="shortcut icon" href="customIcon.png">
+    <script>
+        console.log('explorer =', navigator.userAgent.toLowerCase());
+        if (navigator.userAgent.toLowerCase().indexOf('msie ') > 0) {
+            document.write('<link href="css/main-ie.css" rel="stylesheet" type="text/css">');
+            document.write('<link href="css/cpan-ie.css" rel="stylesheet" type="text/css">');
+        } else {
+            document.write('<link rel="stylesheet" href="css/main.css" type="text/css" />');
+            document.write('<link rel="stylesheet" href="css/cpan.css" type="text/css" />');
+        }
+    </script>
+
     <link rel="stylesheet" href="css/bootstrap/bootstrap-4.3.1.min.css">
     <link rel="stylesheet" href="css/ampUi/ampUi.css">
-    <link rel="shortcut icon" href="customIcon.png">
-
-    <script src="js/cookie.js"></script>
-    <script src="js/cpan.js"></script>
+        
     <script src="js/jQuery/jquery-3.4.1.min.js"></script> <!-- jQuery -->
     <script src="js/bootstrap/bootstrap-4.3.1.min.js"></script>
     <script src="js/konva/konva-3.2.4.min.js"></script> <!-- Konva -->
@@ -29,27 +37,16 @@
     <script src="js/ampUi/ampUiFiltersSettings.js"></script> <!-- Settings for filters layout and behavior -->
     <script src="js/ampUi/ampUiSlider.js"></script> <!-- Adjustable slider with scale -->
     <script src="js/ampUi/ampUiFiltersGraphSettings.js"></script> <!-- Equalizer graph settings -->
-
     <script src="js/ampUi/ampUiFiltersList.js"></script> <!-- Filters list -->
     <script src="js/ampUi/ampUiFiltersGraph.js"></script> <!-- Equalizer graph -->
     <script src="js/ampUi/ampUiFiltersDeck.js"></script> <!-- Filters deck -->
     <script src="js/ampUi/ampUiChannelEdit.js"></script> <!-- Controller to edit channel settings -->
-
     <script src="js/ampUi/ampUiEntryPoint.js"></script>
+
     <script src="js/main.js"></script>
     <script src="js/cookie.js"></script>
     <script src="js/cpan.js"></script>
-    <!--    <script src="js/eq.js"></script> -->
-    <script>
-        console.log('explorer =', navigator.userAgent.toLowerCase());
-        if (navigator.userAgent.toLowerCase().indexOf('msie ') > 0) {
-            document.write('<link href="css/main-ie.css" rel="stylesheet" type="text/css">');
-            document.write('<link href="css/cpan-ie.css" rel="stylesheet" type="text/css">');
-        } else {
-            document.write('<link rel="stylesheet" href="css/main.css" type="text/css" />');
-            document.write('<link rel="stylesheet" href="css/cpan.css" type="text/css" />');
-        }
-    </script>
+    <!--    <script src="js/eq.js"></script> -->    
 </head>
 
 <!--<body onload='init();resize();'>-->
@@ -88,22 +85,22 @@
         </div>
     </div>
 
-    <div class="modal">
-        <div class="modal-content">
-            <span class="close-button">×</span>
+    <div id="eqModal" class="modal">
+        <div id="eqModalContent" class="modal-content">
+            <span class="close">&times;</span>
             <div class="container-fluid h-100">
-                <div class="row justify-content-center h-100">
-                    <div class="col-12 bg-red">
-                        <div class="h-100 d-flex flex-nowrap flex-column ">
-                            <div class="row justify-content-center flex-fill flex-grow-1 flex-nowrap">
-                                <div class="d-flex flex-nowrap flex-column  bg-primary text-truncate flex-fill">
-                                    <div class="row flex-grow-1 bg-warning m-0 p-0">
-                                        <div id="graph-container" class="d-flex  flex-column text-truncate flex-fill col-12 m-0 p-0"></div>
+                    <div class="row justify-content-center h-100">
+                        <div class="col-12 bg-red">
+                            <div class="h-100 d-flex flex-nowrap flex-column ">
+                                <div class="row justify-content-center flex-fill flex-grow-1 flex-nowrap">
+                                    <div class="d-flex flex-nowrap flex-column text-truncate flex-fill">
+                                        <div class="row flex-grow-1 m-0 p-0">
+                                            <div id="graph-container" class="d-flex flex-column text-truncate flex-fill col-12 m-0 p-0" style="background:black;"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>            
+                        </div>            
                 </div>
             </div>
         </div>

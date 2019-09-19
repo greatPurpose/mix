@@ -60,6 +60,7 @@ ampUi.SliderOld = function(
 		
 		// -- Assign initial values 
 		// ++ Calculate dimensions 
+		
 		this.containerJq = $('#' + this.containerId);
 		this.containerWidth = $(this.containerJq).width();
 		this.containerHeight = $(this.containerJq).height();
