@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="windows-1251">
+	
+	<title>Login</title>
+	<!-- [if IE] -->
+	<link href="css/login-ie.css" rel="stylesheet" type="text/css">
+	<!-- [endif] -->
+
+	<!-- [if !IE] -->
+	<link rel="stylesheet" href="css/login.css" type="text/css" />
+	<!-- [endif] -->
+			
+	<script src="js/login.js"></script>
+	<script src="js/webhelper.js"></script>	
+	<script src="js/cookie.js"></script>	
+</head>
+
+<body onload='init()'>
+
+<!--[if !IE]>-->
+	<div class="header_main" id="ClassHeaderMain">				
+    
+		<!-- header text logo -->
+	  <div class="header_logo">Audio Mixing Platform (AMP)</div>
+		
+		<div class="menu_bar">
+      <div class="options_btn"></div>
+      <div class="logout_btn" onClick="Logout()"></div>
+    </div>
+		
+	</div>    
+
+<!--<![endif]-->
+    
+<!--[if IE]> 
+    	<div class="header_main" id="ClassHeaderMain">   
+    
+    <div class="header_main_left"></div>
+    <div class="header_main_right"></div>
+
+	  <div class="header_logo">Audio Mixing Platform (AMP)</div>
+		
+		<div class="menu_bar_ie">
+      <div class="options_btn"></div>
+      <div class="logout_btn" onClick="Logout()"></div>
+    </div>
+
+	</div>	
+
+<![endif]-->
+
+<!-- [if !IE] --><div class="formcontainer"><!--<![endif]-->
+<!--[if IE]><div class="formcontainerie"><![endif]-->
+  
+<div class="formpadding">
+  
+  <form method="post" id="lg_form" onSubmit="return OnSubmitClick();">
+		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="2">
+			<tr>
+				<td height="30" valign="middle"> <span class="form_label">Login:</span></td>
+				<td align="right"><input type="text" name="login" id="ClassLogin" onkeypress="OnLoginEnter(event)"></td>
+			</tr>
+	<!--	<tr>
+				<td height="30" valign="middle"><span class="form_label">Password:&nbsp;</span></td>
+				<td align="right"><input type="password" name="pass" id="ClassPassword" onkeypress="OnPasswordEnter(event)"></td>
+			</tr>
+	-->		<tr>
+				<td align="right"></td>
+				<td valign="middle"><input name="rem" type="checkbox" id="rem"><span class="check_label">&nbsp;remember me</span></td>
+			</tr>
+			<tr>
+				<td height="50" colspan="2" align="center" valign="middle">
+				<input type="submit" name="submit" id="submit" form="lg_form" value="LOGIN" ></td>
+			</tr>
+		</table>
+	</form>
+	
+</div>
+</div>
+
+</body>
+</html>

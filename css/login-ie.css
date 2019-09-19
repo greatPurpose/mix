@@ -1,0 +1,297 @@
+@font-face{
+	font-family: 'Unibody8Pro-Regular';
+	src: url('../fonts/Unibody8Pro-Regular.eot?') format('eot'),;
+	src: url('../fonts/Unibody8Pro-Regular.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Unibody8Pro-Regular.otf')  format('opentype'),
+		 url('../fonts/Unibody8Pro-Regular.woff') format('woff'), 
+		 url('../fonts/Unibody8Pro-Regular.ttf')  format('truetype'),
+		 url('../fonts/Unibody8Pro-Regular.svg#Unibody8Pro-Regular') format('svg');
+}
+		
+@font-face{
+  font-family: 'eras_bold_itcregular';
+  src: url('../fonts/erasbd-webfont.eot');
+  src: url('../fonts/erasbd-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/erasbd-webfont.woff') format('woff'),
+       url('../fonts/erasbd-webfont.ttf') format('truetype'),
+       url('../fonts/erasbd-webfont.svg#eras_bold_itcregular') format('svg');
+}
+		
+.header_main_left{
+	height:40px;
+	width:30px;	
+	background-image: url(../images/header_bg_left_ie.png);
+	background-repeat:no-repeat;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;	
+	float: left;
+	position:relative;
+	left:0px;			
+	z-index:197;
+}
+
+.header_main_right{
+	height:40px;
+	width:15px;	
+	background-image: url(../images/header_bg_right_ie.png);
+	background-repeat:no-repeat;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;	
+	float: right;
+	position:relative;
+	z-index:197;
+}
+	
+.header_main{
+	height: 40px;
+	width: 100%;	
+	background-image: url(../images/header_bg_ie.png);
+	background-repeat: repeat-x;		
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;	
+	float: left;
+	position: fixed;			
+	color: #FFF;	
+	z-index: 196;
+}
+				
+.header_logo{
+	position: relative;
+	color: #DBDBDB;
+	width: 300px;
+	height: 30px;	
+	background-image: url(../images/logo.png);
+	background-repeat:no-repeat;
+	left: 26px;
+	top: 5px;	
+	font-family: 'eras_bold_itcregular' !important;
+	padding-left: 42px;
+  padding-top: 5px;
+	font-size: 17px;	
+}	
+
+body{
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	background-color: #272727;
+	background-image: url(../images/metallbg.png);
+  background-repeat: repeat;	 
+}	
+
+.formcontainerie:before,
+.formcontainerie:after{
+		content: ''; 
+   	position: absolute;
+}	
+		
+.formcontainerie:before{
+    width:250px;
+    height:20px; 
+	background-image: url(../images/lg_top.png);
+	background-repeat:no-repeat;
+}
+
+.formcontainerie:after{
+    width:250px;
+    height:20px; 
+	bottom:-10px;
+	background-image: url(../images/lg_bottom.png);
+	background-repeat:no-repeat;
+}
+
+.formcontainerie{
+    width:250px;
+    height:165px; 
+    margin:0 auto;
+    position:relative;
+    left:50%;
+    top:50%;
+    margin-left:-125px; 
+    margin-top:-90px; 
+	background-image: url(../images/lg_body.png);
+	background-repeat:repeat-y;
+}
+
+.formpadding{
+	padding:20px;	
+}
+
+input[type=text]{
+	background-color:#333;
+	color:#FFE7CE;
+	font-weight:bold;
+	border:solid;
+	border-width:1px;
+	border-color:#FFE1D2;
+	font-family: 'Helvetica' !important;
+	width:115px;	
+}
+
+input[type=password]{
+	background-color:#333;
+	color:#FFE7CE;
+	font-weight:bold;
+	border:solid;
+	border-width:1px;
+	border-color:#FFE1D2;
+	font-family: 'Helvetica' !important;
+	width:115px;	
+}
+
+input[type=text]:focus{
+	border-color:#fff; 
+}
+	
+/* Labels Login and Password */
+.form_label{
+	color:#FFE7CE;
+	font-weight:bold;
+	font-family: 'Helvetica' !important;
+	font-size:14px;		
+}
+
+/* Labels CheckBox */
+.check_label{
+	color:#FFE7CE;
+	/* font-weight: bold; */ 
+	font-family: 'Helvetica' !important;
+	font-size:13px;		
+}
+
+input[type=radio]{
+	color:#FFE7CE;
+	font-weight:bold;
+	font-family: 'Helvetica' !important;
+	font-size:14px;	
+	width:20px;
+	top:-6px;
+	position:relative;	
+}
+
+input[type=radio]:hover{
+	background-color:#FC6;
+	font-weight:bold;
+	font-family: 'Helvetica' !important;
+	font-size:14px;	
+	width:20px;
+	top:-6px;
+	position:relative;	
+}
+
+input[type=button]
+{
+	background-color: #1e2126;
+	background-image: url(../images/submit.png);
+	background-repeat:no-repeat;
+	width:101px;
+	height:35px;
+	font-family: 'Helvetica' !important;
+	color: #FFE7CE;
+	border:none;
+	padding-bottom: 6px;
+}
+
+input[type=button]:active
+{
+	background-color: #1e2126;
+	background-image: url(../images/submit_p.png);
+	background-repeat:no-repeat;
+	width:101px;
+	height:35px;
+	font-family: 'Helvetica' !important;
+	color: #000;
+	border:none;
+	padding-bottom:0px;	
+}
+
+/*menu bar*/
+.menu_bar_ie:before,
+.menu_bar_ie:after{
+  content: ''; 
+  position: absolute;
+} 
+  
+.menu_bar_ie:before{
+	width: 77px;
+	height: 32px; 
+	left: 0px;
+	background-image: url(../images/ddd_left.png);
+	background-repeat: no-repeat;
+}
+
+.menu_bar_ie:after{
+  width: 77px;
+  height: 32px;
+  left: 69px;
+	background-image: url(../images/ddd_right.png);
+	background-repeat: no-repeat;
+}
+
+.menu_bar_ie{
+	position: relative;
+	width: 77px;
+	height: 32px;
+	background-image: url(../images/ddd_body.png);
+	background-repeat: repeat-x;
+	float: right;
+	top: -30px;
+	right: 10px;
+}
+
+.logout_btn{
+	position: relative;
+	float: left;
+	width: 24px;
+	height: 24px;
+	background-image: url(../images/logout.png);
+	cursor: pointer;
+	left: 18px;
+	top: 4px;
+}
+
+.logout_btn:hover{
+	position: relative;
+	float: left;
+	width: 24px;
+	height: 24px;
+	background-image: url(../images/logout_hover.png);
+	cursor: pointer;
+	left: 18px;
+	top: 4px;
+}
+
+.options_btn{
+	position: relative;
+	float: left;
+	width: 24px;
+	height: 24px;
+	background-image: url(../images/tools.png);
+	cursor: pointer;
+	left: 10px;
+	top: 4px;
+}
+
+.options_btn:hover{
+	position: relative;
+	float: left;
+	width: 24px;
+	height: 24px;
+	background-image: url(../images/tools_hover.png);
+	cursor: pointer;
+	left: 10px;
+	top: 4px;
+}

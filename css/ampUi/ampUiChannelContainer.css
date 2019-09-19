@@ -1,0 +1,85 @@
+
+
+
+
+
+
+.channelcontainer-label-pan-l {
+
+}
+
+.channelcontainer-slider-pan {
+
+}
+
+.channelcontainer-label-pan-r {
+
+}
+
+.channelcontainer-label-meter-l {
+	
+
+}
+
+.channelcontainer-label-meter-r {
+	
+
+}
+
+.channelcontainer-slider-volume {
+	
+}
+
+.channelcontainer-button-equalizer {
+	cursor: pointer;
+}
+
+.channelcontainer-button-mute {
+
+	cursor: pointer;
+}
+
+/*
+.channelcontainer-peak-l,
+.channelcontainer-peak-r {
+	font-size: 2vh;
+	
+}
+*/
+
+.channelcontainer-meter-l {
+	/*background-color: #3D9289;*/ /* Dirty Aqua */
+	/*background: #00FF00;*/
+}
+
+.channelcontainer-scale-volume {
+	/*background-color: #F90DA7;*/ /* Pink */
+	/*background-color: #ffffff;*/
+
+}
+
+
+
+.channelcontainer-meter-r {
+	/*background-color: #F9EE0D;*/ /* Yellow Green */
+	/*background: #00FF00;*/
+}
+}
+
+
+
+.channelcontainer-label-number {
+
+}
+
+.channelcontainer-label-name {
+
+}
+
+
+
+
+
+
+
+

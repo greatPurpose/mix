@@ -1,0 +1,168 @@
+html,body {
+	height:100%; 
+	user-select: none;
+	background-color: #1c181d;
+	/*color: #ffffff;*/
+}
+
+.channelcontainer {
+	-ms-flex: 0 0 8vw;
+    flex: 0 0  8vw;
+	user-select: none;
+}			
+
+			
+.h-12_5 {
+	 height: 12.5%!important;
+}
+
+.h-6_25 {
+	 height: 6.25%!important;
+}
+
+.h-81_25 {
+	 height: 81.25%!important;
+}
+
+.h-87_5 {
+	 height: 87.5%!important;
+}
+
+.h-93_75 {
+	 height: 93.75%!important;
+}
+
+.filterinfo-row {
+	cursor: pointer;
+}
+
+
+.hidden-important {
+	display: none !important;
+}
+
+.flex-important {
+	display: flex !important;
+}
+
+#currentchannel-button-mute {
+	font-size: 2.55vmin;
+	cursor: pointer;
+}
+
+
+#currentchannel-label-meter-l {
+	color: #ffffff;
+}
+
+#currentchannel-label-meter-r {
+	color: #ffffff;
+}
+
+#currentchannel-label-peak-l {
+	color: #ffffff;
+}
+
+#currentchannel-label-peak-r {
+	color: #ffffff;
+}
+
+#navigation-hint {
+	color: #ffffff;
+}
+
+#currentchannel-label-number {
+	color: #ffffff;
+}
+
+#currentchannel-label-name {
+	color: #ffffff;
+}
+
+#navigation-button-options {
+	color: #1c181d;
+	background-color: #ffffff;
+}
+
+#currentchannel-button-mute {
+	color: #1c181d;
+	background-color: #ffffff;
+}
+
+#navigation-title {
+	color: #ffffff;
+}
+
+#navigation-button-exit {
+	color: #1c181d;
+	background-color: #ffffff;
+}
+
+
+#currentchannel-meter-l {
+}
+
+#currentchannel-meter-r {
+}
+
+#currentchannel-scale {
+	/*background: violet;*/
+	/*font-size: 10px;*/
+}
+#currentchannel-label-name,
+#currentchannel-label-number,
+#navigation-hint {
+	font-size: 1.75vmin;
+}
+
+#currentchannel-label-meter-l,
+#currentchannel-label-meter-r,
+#currentchannel-label-peak-l,
+#currentchannel-label-peak-r {
+	font-size: 1.60vmin;
+}
+
+#navigation-button-viewgroups,
+#navigation-button-mixes,
+#navigation-button-options,
+#navigation-button-exit {
+	font-size: 2.25vmin;
+	cursor: pointer;
+}
+
+
+
+#container-channels-list {
+	overflow-x: scroll;
+	background-color: #1c181d; /* Ordinary */
+	
+}
+#container-viewgroups-list {
+	overflow-y: scroll;
+	background: #ffffff;
+}
+
+
+#container-mixes-list {
+	overflow-y: scroll;
+	background: #ffffff;
+}
+
+
+
+/*
+#currentchannel-label-name,
+#currentchannel-label-number,
+*/
+
+
+#navigation-title {
+	font-weight: bold;
+	font-size: 2.85vmin;
+}
+
+
+
+
+
+

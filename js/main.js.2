@@ -1,0 +1,803 @@
+// Global variables 
+var GHTTPRequestWorker;
+var GWorkersNotSupported;
+var GIE8Required;
+var IE;
+var ie10;
+
+// Session
+var GSessionID;
+
+// Timers
+var GSendMetersUpdateTimer;
+var GSendSliderPositionTimer;
+var GSendControlsSyncTimer;
+var GMetersUpdateRate = 75; // ms
+var GSlidersSendRate = 250; // ms
+var GControlsSyncRate = 21000; // ms
+
+// Channels
+var GChannelCount = 0;
+var GChannelCaptions = [];
+var GChannelTypes = [];
+var GChannelPans = [];
+
+// Selected slider info
+var GSelectedSlider;
+var GSelectedSliderID;
+var GSelectedSliderClass;
+var GSelectedSliderInfotext;
+// Last updated values
+var GSelectedSliderIDOld=-1;
+var GSelectedSliderInfotextOld=0;
+var bobcount=0;
+// Touch
+var GIsTouch;
+
+// INITIALIZATION
+function init(){			
+	// IE check
+	IE="\v"=="v";
+	// IE 10 check
+	if(/*@cc_on!@*/false)
+	{
+		ie10="1";
+	}else{
+		ie10="0";
+	}
+
+	GWorkersNotSupported = false;	
+	
+	var ServerUrl = window.location.href;
+	
+	// Request Session ID
+//	GSessionID = HTTPRequestSend(ServerUrl + "?" + "status" + "=" + "sessionid" + HTTPRequestAntiCache());
+GSessionID='1';	
+	// check cookies
+	var Login1 = getCookie('login');
+	var Password1 = getCookie('password');	
+	var Response1 = Authorization(Login1, Password1,GSessionID);	
+	if (Response1.search("accepted") == -1){
+		window.open("index.html", "_self"); 
+		return;
+	}
+	
+	// Create consoles 
+	var mainconsole1 = document.getElementById("ClassMainConsole");	
+	
+	if (mainconsole1.addEventListener)
+	{
+		GIE8Required = false;
+	}
+	else
+	{ // IE8 compatible
+		GIE8Required = true;
+	}
+	
+	try{  
+    document.createEvent("TouchEvent");
+    GIsTouch = true;
+  }
+  catch(e){
+    GIsTouch = false;
+  }						
+	try
+	{
+		GHTTPRequestWorker = new Worker("js/worker-requestsend.js");
+		GHTTPRequestWorker.onmessage = ServerResponseRecieve;
+	}
+	catch(err)
+	{	// IE9 compatible
+		GWorkersNotSupported = true;
+	}
+	
+	// Initialize Channels request	
+	data1 = HTTPRequestSend(ServerUrl + "?" + "status" + "=" + "init&sessionid=" + GSessionID + HTTPRequestAntiCache());
+	InitChannels(data1);
+	
+	// Adjust header width
+	nowrapper1 = document.getElementById("ClassNoWrapper");
+	nowrapper1.style.width = 80 * GChannelCount + "px";	
+		
+	GSendMetersUpdateTimer = setInterval(SendMetersUpdate, GMetersUpdateRate);
+	GSendControlsSyncTimer = setInterval(SyncControlsUpdate, GControlsSyncRate);
+}
+
+function InitChannels(data){	
+	if (WebqueryVariableValue(data, "status") != "init")
+		return;
+
+	var mainconsole1 = document.getElementById("ClassMainConsole");
+	mainconsole1.innerHTML = "";	
+	
+	GChannelCount = Math.floor((WebqueryVariableCount(data) - 1) / 3);
+	
+	// Add Channel Consoles
+	var caption1;
+	var type1;
+	var pan1;
+	var panbool1;
+	for (var i = 0; i < GChannelCount; i++){
+		caption1 = WebqueryVariableValue(data, "caption" + i);
+		type1 = WebqueryVariableValue(data, "type" + i);
+		pan1 = WebqueryVariableValue(data, "pan" + i);
+		if (pan1 == "0")
+			panbool1 = false;
+		else
+			panbool1 = true;			
+		AddChannel(i, caption1, type1, panbool1);			
+	}
+}
+
+function AddChannel(channelnumber, channelcaption, channeltype, showpan){
+	var mainconsole1 = document.getElementById("ClassMainConsole");
+	
+	// Console 
+	var console1 = document.createElement("div");	
+	console1.id = "ClassConsole" + channelnumber;
+	console1.className = "console";
+	mainconsole1.appendChild(console1);
+	// Info block 
+	var infoblock1 = document.createElement("div");	
+	infoblock1.id = "ClassInfoBlock" + channelnumber;
+	infoblock1.className = "info_block_on";
+	console1.appendChild(infoblock1);	
+	// Info text 
+	var infotext1 = document.createElement("div");	
+	infotext1.id = "ClassInfoText" + channelnumber;
+	infotext1.className = "info_text";
+	infoblock1.appendChild(infotext1);	
+	// Mute button 
+	var mutebutton1 = document.createElement("div");	
+	mutebutton1.id = "mu" + channelnumber;
+	mutebutton1.className = "mute_button_off";
+	console1.appendChild(mutebutton1);
+	// EQ button 
+	var eqbutton1 = document.createElement("div");	
+	eqbutton1.id = "ClassEQButton" + channelnumber;
+	eqbutton1.className = "eq_button_off";
+//	console1.appendChild(eqbutton1);
+	// Pan panel
+	var panpanel1 = document.createElement("div");	
+	panpanel1.id = "ClassPanPanel" + channelnumber;
+	panpanel1.className = "pan_panel";	
+	console1.appendChild(panpanel1);
+	if (showpan)
+	{
+		// Pan bar
+		var panbar1 = document.createElement("div");	
+		panbar1.id = "ClassPanBar" + channelnumber;
+		panbar1.className = "pan_bar";	
+		panpanel1.appendChild(panbar1);		
+		// Pan slider 
+		var panslider1 = document.createElement("div");	
+		panslider1.id = "pn" + channelnumber;
+		panslider1.className = "pan_slider";	
+		panbar1.appendChild(panslider1);	
+	}
+	// Slider group, with additional attributes that contain references to bar, info and sliderline	
+	var slidergroup1 = document.createElement("div");	
+	slidergroup1.id = "ClassSliderGroup" + channelnumber;
+	slidergroup1.className = "slider_group";	
+	console1.appendChild(slidergroup1);
+	// Slider group / Bar 
+	var bar1 = document.createElement("div");	
+	bar1.id = "ClassBar" + channelnumber;
+	bar1.className = "bar";	
+	slidergroup1.appendChild(bar1);	
+	// Slider group / Bar / Slider 
+	var slider1 = document.createElement("div");	
+	slider1.id = "fd" + channelnumber;
+	slider1.className = channeltype;	
+	bar1.appendChild(slider1);
+	// Slider group / Bar / Slider line 
+	/* var sliderline1 = document.createElement("div");	
+	sliderline1.id = "ClassSliderLine" + channelnumber;
+	sliderline1.className = "slider_line";
+	bar1.appendChild(sliderline1); */
+	// Slider group / Digits 
+	var digits1 = document.createElement("div");	
+	digits1.id = "ClassDigits" + channelnumber;
+	digits1.className = "digits";	
+	slidergroup1.appendChild(digits1);
+	// Slider group / Digits / p20 
+	var p20 = document.createElement("div");	
+	p20.className = "p20";	
+	p20.innerHTML = "+20";		
+	digits1.appendChild(p20);		
+	// Slider group / Digits / p10 
+	var p10 = document.createElement("div");	
+	p10.className = "p10";	
+	p10.innerHTML = "+10";
+	digits1.appendChild(p10);	
+	// Slider group / Digits / zero 
+	var zero = document.createElement("div");	
+	zero.className = "zero";
+	zero.innerHTML = "__";
+	digits1.appendChild(zero);	
+	// Slider group / Digits / m10 
+	var m10 = document.createElement("div");	
+	m10.className = "m10";
+	m10.innerHTML = "-10";
+	digits1.appendChild(m10);	
+	// Slider group / Digits / m20 
+	var m20 = document.createElement("div");	
+	m20.className = "m20";	
+	m20.innerHTML = "-20";		
+	digits1.appendChild(m20);	
+	// Slider group / Digits / m30 
+	var m30 = document.createElement("div");	
+	m30.className = "m30";	
+	m30.innerHTML = "-30";		
+	digits1.appendChild(m30);	
+	// Slider group / Digits / soff 
+	var soff = document.createElement("div");	
+	soff.className = "s_off";	
+	soff.innerHTML = "OFF";			
+	digits1.appendChild(soff);							
+	// Slider group / Indicator 
+	var indicator1 = document.createElement("div");	
+	indicator1.id = "ClassIndicator" + channelnumber;
+	indicator1.className = "indicator";	
+	slidergroup1.appendChild(indicator1);	
+	// Slider group / Indicator light 
+	var indicatorlight1 = document.createElement("div");	
+	indicatorlight1.id = "ClassIndicatorLight" + channelnumber;
+	indicatorlight1.className = "indicatorlight";	
+	slidergroup1.appendChild(indicatorlight1);		
+	// Slider group / Indicator overload L 
+	var indicatoroverl1 = document.createElement("div");	
+	indicatoroverl1.id = "ClassIndicatorOverL" + channelnumber;
+	indicatoroverl1.className = "indicatormeter_over_l";	
+	slidergroup1.appendChild(indicatoroverl1);		
+	// Slider group / Indicator overload R
+	var indicatoroverr1 = document.createElement("div");	
+	indicatoroverr1.id = "ClassIndicatorOverR" + channelnumber;
+	indicatoroverr1.className = "indicatormeter_over_r";	
+	slidergroup1.appendChild(indicatoroverr1);		
+	// Slider group / Indicator meter left
+	var indicatormeterleft = document.createElement("div");	
+	indicatormeterleft.id = "ml" + channelnumber;
+	indicatormeterleft.className = "indicatormeter_l";	
+	slidergroup1.appendChild(indicatormeterleft);
+	// Slider group / Indicator meter right
+	var indicatormeterright = document.createElement("div");	
+	indicatormeterright.id = "mr" + channelnumber;
+	indicatormeterright.className = "indicatormeter_r";	
+	slidergroup1.appendChild(indicatormeterright);				
+	// Channel info 
+	var channelinfo1 = document.createElement("div");	
+	channelinfo1.id = "ClassChannelInfo" + channelnumber;
+	channelinfo1.className = "channel_info";	
+	console1.appendChild(channelinfo1);
+	
+	// Channel info / Channel name 
+	if(IE) {
+		var channelname1 = document.createElement("div");	
+		channelname1.id = "ClassChannelName" + channelnumber;
+		channelname1.className = "chanel_nameie";	
+		channelinfo1.appendChild(channelname1);		
+	}else{	
+		var channelname1 = document.createElement("div");	
+		channelname1.id = "ClassChannelName" + channelnumber;
+		channelname1.className = "chanel_name";	
+		channelinfo1.appendChild(channelname1);		
+	}					
+	
+	// Slider has references to other related elements that are used in slider Events 
+	slider1.customBar = bar1.id;
+	slider1.customInfotext = infotext1.id;	
+	/*slider1.customSliderline = sliderline1.id;*/
+	slider1.customSlidergroup = slidergroup1.id;
+	slider1.customConsole = console1.id;
+	channelname1.innerHTML = channelcaption;
+	if (showpan)
+	{	
+		panslider1.customBar = panpanel1.id;
+		panslider1.customSlidergroup = slidergroup1.id;
+		panslider1.customConsole = console1.id;	
+	}
+	
+	// slider default values 
+	infotext1.innerHTML = "Off";	
+	slider1.style.top = bar1.offsetHeight - slider1.offsetHeight - 8 + "px";
+	mutebutton1.checked = false;
+	eqbutton1.checked = false;
+	
+	if (GIsTouch)
+	{
+		slider1.addEventListener("touchstart", startTouch, false);	
+		slider1.addEventListener("touchmove", moveTouch, false);	
+		slider1.addEventListener("touchend", stopTouch, false);	
+		if (showpan)
+		{
+			panslider1.addEventListener("touchstart", startTouch, false);	
+			panslider1.addEventListener("touchmove", moveTouch, false);	
+			panslider1.addEventListener("touchend", stopTouch, false);	
+		}
+		mutebutton1.addEventListener("touchstart", OnChangeMuteButton, false);
+	//	eqbutton1.addEventListener("touchstart", OnChangeEQButton, false);		
+	}
+	else if (!GIE8Required)
+	{
+		slider1.addEventListener("mousedown", startSlide, false);	
+		if (showpan)
+			panslider1.addEventListener("mousedown", startSlide, false);
+		mutebutton1.addEventListener("click", OnChangeMuteButton, false);	
+	//	eqbutton1.addEventListener("click", OnChangeEQButton, false);
+	}
+	else 
+	{ // IE8 compatible
+		slider1.attachEvent("onmousedown", startSlide, false);	
+		if (showpan)
+			panslider1.attachEvent("onmousedown", startSlide, false);
+		mutebutton1.attachEvent("onclick", OnChangeMuteButton, false);		
+	//	eqbutton1.attachEvent("onclick", OnChangeEQButton, false);		
+	}	
+}
+
+// EVENTS -----------------------------------------------------------------------------------------
+
+// Events helpers 
+function EventTargetIE8Compatible(event){
+	if (!GIE8Required)
+	{
+		return event.target;
+	}
+	else
+	{	// IE8 compatible		
+		return event.srcElement;
+	}
+}
+
+// Fader coordinates adjustments 
+function FadersUpdateOnMove(event){
+	mainconsole1 = document.getElementById("ClassMainConsole");	
+	var bar1 = document.getElementById(GSelectedSlider.customBar);
+	var infotext1 = document.getElementById(GSelectedSlider.customInfotext);
+	// var sliderline1 = document.getElementById(slider1.customSliderline);
+	
+	if (GIsTouch)
+	{
+		clienty1 = event.changedTouches[0].clientY + document.documentElement.scrollTop + document.body.scrollTop;
+	}
+	else
+	{
+		clienty1 = event.clientY + document.documentElement.scrollTop + document.body.scrollTop;
+	}	
+	
+	var slidergroup1 = document.getElementById(GSelectedSlider.customSlidergroup);
+	var console1 = document.getElementById(GSelectedSlider.customConsole);
+	var top1 = mainconsole1.offsetTop + bar1.offsetTop + slidergroup1.offsetTop + console1.offsetTop;
+	var relativeheight1 = bar1.offsetHeight - 8;	
+	var bottom1 = relativeheight1 - GSelectedSlider.offsetHeight;
+				
+	var slider_top = clienty1 - top1 - GSelectedSlider.offsetHeight/2;
+	if (slider_top < 0){
+		GSelectedSlider.style.top = 0;
+	} else if (slider_top < bottom1){
+		GSelectedSlider.style.top = slider_top + "px";		
+	} else{
+		GSelectedSlider.style.top = bottom1 + "px";
+	}
+    var ov;
+	var set_perc = (clienty1 - top1 - GSelectedSlider.offsetHeight/2 - 0) / (relativeheight1 - GSelectedSlider.offsetHeight);
+	set_perc = 127-(set_perc * 127).toFixed(0);
+	if (set_perc>127) { set_perc=127; }
+	if (set_perc >=50){ ov=((set_perc-50)/2)-20; }
+	if (set_perc <10) { ov=set_perc*2-80; }
+	if ((set_perc>=10) && (set_perc<50)) { ov=set_perc-70; }
+
+	if (ov<-78) { ov = 'Off'; } else { ov=ov.toFixed(1); }	
+	infotext1.innerHTML = ov;
+ infotext1.innerHTML = clienty1;	
+	GSelectedSliderInfotext = GSelectedSlider.style.top;
+
+	
+	/*sliderline1.style.top = slider1.style.top;
+	sliderline1.style.height = bar1.offsetHeight + slidergroup1.offsetTop - slider1.offsetTop - slider1.offsetHeight + "px";*/
+  //GSendSliderPositionTimer = setInterval(SendSliderPosition, GSlidersSendRate);
+//////ServerRequestSend(GSelectedSlider.id, GSelectedSliderInfotext);
+//if (GSendControlsSyncTimer != NULL) {
+  //clearInterval(GSendControlsSyncTimer);
+  //GSendControlsSyncTimer = setInterval(SyncControlsUpdate, GControlsSyncRate);
+// }
+}
+
+// PANs coordinates adjustments 
+function PansUpdateOnMove(event){
+	mainconsole1 = document.getElementById("ClassMainConsole");	
+	var bar1 = document.getElementById(GSelectedSlider.customBar);
+	
+	if (GIsTouch)
+	{
+		clientx1 = event.changedTouches[0].clientX + document.documentElement.scrollLeft + document.body.scrollLeft;
+	}
+	else
+	{
+		clientx1 = event.clientX + document.documentElement.scrollLeft + document.body.scrollLeft;
+	}
+	
+	var slidergroup1 = document.getElementById(GSelectedSlider.customSlidergroup);
+	var console1 = document.getElementById(GSelectedSlider.customConsole);
+	var left1 = mainconsole1.offsetLeft + bar1.offsetLeft + slidergroup1.offsetLeft + console1.offsetLeft;
+	var relativewidth1 = bar1.offsetWidth;	
+	var right1 = relativewidth1 - GSelectedSlider.offsetWidth;
+				
+	var panslider_left = clientx1 - left1 - GSelectedSlider.offsetWidth/2;
+	if (panslider_left < 0){
+		GSelectedSlider.style.left = 0;
+	} else if (panslider_left < right1){
+		GSelectedSlider.style.left = panslider_left + "px";		
+	} else{
+		GSelectedSlider.style.left = right1 + "px";
+	}
+	
+	GSelectedSliderInfotext = GSelectedSlider.style.left;
+}
+
+// MOUSE EVENTS	
+// Slider mouseup, mousedown and move
+function startSlide(event){
+	GSelectedSliderID = EventTargetIE8Compatible(event).id;
+	GSelectedSlider = document.getElementById(GSelectedSliderID);
+	GSelectedSliderClass = GSelectedSlider.className;
+	
+	if (!GIE8Required) 
+	{
+		document.addEventListener("mousemove", moveSlide, false);
+		document.addEventListener("mouseup", stopSlide, false);		
+	}
+	else // IE8 compatible
+	{
+		document.attachEvent("onmousemove", moveSlide, false);	
+		document.attachEvent("onmouseup", stopSlide, false);				
+	}	
+//GSelectedSliderInfotext= GSelectedSliderID.value;	
+//ServerRequestSend(GSelectedSliderID, GSelectedSliderInfotext);	
+////	GSendSliderPositionTimer = setInterval(SendSliderPosition, GSlidersSendRate);	
+
+}
+
+function stopSlide(event){
+	if (!GIE8Required) 
+	{
+		document.removeEventListener("mousemove", moveSlide, false);
+		document.removeEventListener("mouseup", stopSlide, false);		
+	}
+	else // IE8 compatible
+	{
+		document.detachEvent("onmousemove", moveSlide, false);	
+		document.detachEvent("onmouseup", stopSlide, false);				
+	}		
+	
+	clearInterval(GSendSliderPositionTimer);	
+//	SendSliderPosition(); // make sure last Slider value sent
+	GSendSliderPositionTimer = null;		
+}
+
+function moveSlide(event){
+	if (GSelectedSliderClass == "pan_slider")
+		PansUpdateOnMove(event);
+	else
+		FadersUpdateOnMove(event);							
+}	
+
+// TOUCH EVENTS
+
+// Slider touchstart, touchend and touchmove
+function startTouch(event){
+	event.preventDefault();	
+	
+	GSelectedSliderID = EventTargetIE8Compatible(event).id;
+	GSelectedSlider = document.getElementById(GSelectedSliderID);
+	GSelectedSliderClass = GSelectedSlider.className;
+//GSelectedSliderInfotext= GSelectedSliderID.value;	
+//alert('2');
+//ServerRequestSend(GSelectedSliderID, GSelectedSliderInfotext);
+////	GSendSliderPositionTimer = setInterval(SendSliderPosition, GSlidersSendRate);				
+}
+
+function stopTouch(event){
+	event.preventDefault();		
+	
+	clearInterval(GSendSliderPositionTimer);	
+//	SendSliderPosition(); // make sure last Slider value sent	
+	GSendSliderPositionTimer = null;
+}
+
+function moveTouch(event){	
+	if (GSelectedSliderClass == "pan_slider")
+		PansUpdateOnMove(event);
+	else
+		FadersUpdateOnMove(event);
+	event.preventDefault();
+}
+
+// Mute Button click 
+function OnChangeMuteButton(event){	
+	var buttonid1 = EventTargetIE8Compatible(event).id;	
+	var button1 = document.getElementById(buttonid1);		
+	
+	button1.checked = !button1.checked;
+	ServerRequestSend(button1.id, button1.checked);			
+	MuteButtonImageUpdate(button1);
+}
+
+function MuteButtonImageUpdate(button){
+	if (!button.checked){
+		button.className = "mute_button_off";
+	}else{
+		button.className = "mute_button_on";	
+	}
+}
+// SERVER INTERACTION -----------------------------------------------------------------------------
+
+// TIMER that requests new Meter values
+function SendMetersUpdate(){
+	ServerRequestSend("status", "meters");								
+}
+
+// TIMER that sends updated values from Sliders
+function SendSliderPosition(){
+	if (GSelectedSliderInfotext != GSelectedSliderInfotextOld || GSelectedSliderID != GSelectedSliderIDOld)
+	{
+		GSelectedSliderInfotextOld = GSelectedSliderInfotext;
+		GSelectedSliderIDOld = GSelectedSliderID;
+		ServerRequestSend(GSelectedSliderID, GSelectedSliderInfotext);
+	}		
+}
+
+function SyncControlsUpdate(){
+	ServerRequestSend("status", "controls");	
+}
+
+// Server Responses Callback for Workers (FF, Chrome, IE10 and upper)
+function ServerResponseReceive(e){
+	ServerResponseReceiveNoWorkers(e.data);	
+}			
+
+// Server Responses Callback for IE9 and lower
+// ALL RESPONSES GO HERE
+function ServerResponseReceiveNoWorkers(data){
+	// Meters
+	if (WebqueryVariableValue(data, "status") == "meters")
+	{
+		for (var i = 0; i < GChannelCount; i++)
+		{			
+			// Meter Left
+			var indicatormetername1 = "ml" + i;
+			var indicatormetername2 = "mr" + i;
+			var indv1 = data.charCodeAt(i*2+14);
+			var indv2 = data.charCodeAt(i*2+15);
+			if (indv1)
+			{
+				var indicatormeter1 = document.getElementById(indicatormetername1);	
+				var indicatormeter2 = document.getElementById(indicatormetername2);				
+				if(ie10="1"){
+					indicatormeter1.style.backgroundPosition = "0 -" + indv1 * 2 + "px";	
+					indicatormeter2.style.backgroundPosition = "0 -" + indv2 * 2 + "px";
+				}else if(!IE) {
+					indicatormeter1.style.backgroundPosition = "0 -" + indv1 * 2 + "px";
+					indicatormeter2.style.backgroundPosition = "0 -" + indv2 * 2 + "px";
+				}else{
+					indicatormeter1.style.backgroundPositionY = indv1 * 2 + "px";	
+					indicatormeter2.style.backgroundPositionY = indv2 * 2 + "px";
+				}
+			}
+		}
+	}
+
+	// Controls 
+	if (WebqueryVariableValue(data, "status") == "controls")
+	{			
+		// No Controls sync while Slider values are changed: GSendSliderPositionTimer is on 
+		if (!GSendSliderPositionTimer)
+		{
+			for (var i = 0; i < GChannelCount; i++)
+			{			
+				// Fader slider
+				var slidername1 = "fd" + i;
+				var slidervalue1 = WebqueryVariableValue(data, slidername1.toLowerCase());
+				if (slidervalue1)
+				{
+					var slider1 = document.getElementById(slidername1);
+					if (slider1)
+						if (slider1.style.top != slidervalue1){
+
+							slider1.style.top = slidervalue1;						
+							// calculate approx Fade info text value
+							var bar1 = document.getElementById(slider1.customBar);												
+							var infotext1 = document.getElementById(slider1.customInfotext);						
+							var relativeheight1 = bar1.offsetHeight - 8;
+    var ov;
+	var set_perc = (slider1.offsetTop) / (relativeheight1 - slider1.offsetHeight);
+	set_perc = 127-(set_perc * 127).toFixed(0);
+	if (set_perc>127) { set_perc=127; }
+	if (set_perc >=50){ ov=((set_perc-50)/2)-20; }
+	if (set_perc <10) { ov=set_perc*2-80; }
+	if ((set_perc>=10) && (set_perc<50)) { ov=set_perc-70; }
+
+	if (ov<-78) { ov = 'Off'; } else { ov=ov.toFixed(1); }	
+	infotext1.innerHTML = ov;
+
+							
+							//infotext1.innerHTML = (18.5 - 100 * (slider1.offsetTop) / (relativeheight1 - slider1.offsetHeight + 4)).toFixed(1);
+
+							var faderchanged1 = slidername1 + '=' + slidervalue1;
+						}
+				}		
+
+				// PAN slider
+				var slidername1 = "pn" + i;
+				var slidervalue1 = WebqueryVariableValue(data, slidername1.toLowerCase());
+				if (slidervalue1)
+				{			
+					var slider1 = document.getElementById(slidername1);
+					if (slider1)				
+						if (slider1.style.left != slidervalue1){
+							slider1.style.left = slidervalue1;
+							var panchanged1 = slidername1 + '=' + slidervalue1;
+						}
+				}				
+				
+				// Mute Button 
+				var buttonname1 = "mu" + i;
+				var buttonvalue1 = WebqueryVariableValue(data, buttonname1.toLowerCase());
+				if (buttonvalue1)
+				{								
+					var button1 = document.getElementById(buttonname1);
+					if (button1){	
+						checked1 = buttonvalue1 == "true";
+						if (checked1 != button1.checked){
+							var	mutechanged1 = buttonname1 + '=' + checked1;	
+							button1.checked = checked1;						
+							MuteButtonImageUpdate(button1);				
+						}
+					}
+				}		
+
+				// EQ Button 
+				/*var buttonname1 = "ClassEQButton" + i;
+				var buttonvalue1 = WebqueryVariableValue(data, buttonname1.toLowerCase());
+				if (buttonvalue1)
+				{								
+					var button1 = document.getElementById(buttonname1);
+					if (button1){	
+						checked1 = buttonvalue1 == "true";
+						if (checked1 != button1.checked){
+							var	mutechanged1 = buttonname1 + '=' + checked1;	
+							button1.checked = checked1;						
+							EQButtonImageUpdate(button1);				
+						}
+					}
+				}*/	
+				
+			}
+		}
+	}				
+	
+	// for dynamic CSS load
+	if (WebqueryVariableValue(data, "loadcssfile"))
+	{		
+		LoadJsCssFile(WebqueryVariableValue(data, "loadcssfile"), "css");	
+	}	
+		
+	// for dynamic JS load
+	if (WebqueryVariableValue(data, "loadjsfile"))
+	{		
+		LoadJsCssFile(WebqueryVariableValue(data, "loadjsfile"), "js");	
+	}
+	
+	// check for Init request
+	InitChannels(data);
+	
+	// Display states in DebugConsole if it's loaded
+	var debugconsolelog1 = document.getElementById("ClassDebugConsoleLog");
+	if (debugconsolelog1)
+	{
+		if (WebqueryVariableValue(data, "status") == "controls"){
+			// reacts on external controls update 		
+			if (faderchanged1)
+				debugconsolelog1.innerHTML = faderchanged1 + "<br>" + debugconsolelog1.innerHTML;
+			if (panchanged1)
+				debugconsolelog1.innerHTML = panchanged1 + "<br>" + debugconsolelog1.innerHTML;				
+			if (mutechanged1)
+				debugconsolelog1.innerHTML = mutechanged1 + "<br>" + debugconsolelog1.innerHTML;				
+		}/*else{
+			// reacts on internal controls update 		
+			if ((data.search("fd") != -1) || 
+					(data.search("pn") != -1) ||
+					(data.search("mu") != -1))							
+				debugconsolelog1.innerHTML = data + "<br>" + debugconsolelog1.innerHTML;						
+		}*/
+	}		
+}		
+
+// Server Requests Sender
+function ServerRequestSend(ParamName, ParamValue){	
+	var ServerUrl = window.location.href;
+	bobcount++;
+ServerResponseReceiveNoWorkers(HTTPRequestSend(ServerUrl + "?" + ParamName + "=" + ParamValue + "&sessionid=" + GSessionID + HTTPRequestAntiCache()));
+/*	if (!GWorkersNotSupported)
+	{	
+		GHTTPRequestWorker.postMessage(ServerUrl + "?b="+bobcount+"&" + ParamName + "=" + ParamValue + "&sessionid=" + GSessionID + HTTPRequestAntiCache());			
+	}
+	else
+	{
+		// IE9 compatible			
+		ServerResponseReceiveNoWorkers(HTTPRequestSend(ServerUrl + "?" + ParamName + "=" + ParamValue + "&sessionid=" + GSessionID + HTTPRequestAntiCache()));
+	} */
+}
+
+function LoadJsCssFile(filename, filetype){
+ 	if (filetype=="js"){	// external JavaScript file
+	  var fileref=document.createElement("script");
+	  fileref.setAttribute("type","text/javascript");
+	  fileref.setAttribute("src", filename);
+ 	}
+	else if (filetype=="css"){	// external CSS file
+	  var fileref=document.createElement("link");
+	  fileref.setAttribute("rel", "stylesheet");
+	  fileref.setAttribute("type", "text/css");
+	  fileref.setAttribute("href", filename);
+ 	}
+ 	if (typeof fileref!="undefined")
+  	document.getElementsByTagName("head")[0].appendChild(fileref);
+}
+
+var xStart, yStart = 0;
+ 
+document.addEventListener('touchstart',function(e) {
+    xStart = e.touches[0].screenX;
+    yStart = e.touches[0].screenY;
+});
+ 
+document.addEventListener('touchmove',function(e) {
+    var xMovement = Math.abs(e.touches[0].screenX - xStart);
+    var yMovement = Math.abs(e.touches[0].screenY - yStart);
+    if((yMovement * 3) > xMovement) {
+        e.preventDefault();
+    }
+});
+
+function Authorization(login, password,GSessionID){
+	var ServerUrl1 = window.location.href;
+	var Login1 = "login=" + login;
+	var Password1 = "password=" + password;
+	return HTTPRequestSend(ServerUrl1 + "?" + Login1 + "&" + Password1 + "&sessionid=" + GSessionID);	
+}
+
+function HTTPRequestSend(ServerUrlAndRequest){
+	try
+	{		
+		var xrequest = new XMLHttpRequest();
+		xrequest.open("GET", ServerUrlAndRequest, false);	 
+		xrequest.send(null);
+		return xrequest.responseText;	
+	}
+	catch(err)
+	{	
+		return "EXCEPTION: " + err; 
+	}		
+}
+
+function HTTPRequestAntiCache(){
+	var randomanticache = "&" + "anticache=" + Math.round(Math.random() * 9999) + "-" + Math.round(Math.random() * 9999);
+	return randomanticache;
+};
+
+function WebqueryVariableValue(query, variable){
+  var vars = query.split("&");
+  for (var i = 0; i < vars.length; i++){
+    var pair = vars[i].split("=");
+    if (decodeURIComponent(pair[0]) == variable){
+    	return decodeURIComponent(pair[1]).replace(/(\r\n|\n|\r)/gm, "");
+    }
+  }
+}
+
+function WebqueryVariableCount(query){
+  var vars = query.split("&");
+	return vars.length;
+}
