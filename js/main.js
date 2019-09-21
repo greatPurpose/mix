@@ -51,7 +51,7 @@ var modal;
 var modalcontent;
 var span;
 var selEqIndex = -1;
-
+var mixVal = null;
 // INITIALIZATION
 function init(){			
 	// IE check
@@ -67,8 +67,7 @@ function init(){
 	modal = document.getElementById("eqModal");	
 	modalcontent = document.getElementById("eqModalContent");
 	GWorkersNotSupported = false;	
-	
-	
+		
 	// Request Session ID
 	GSessionID = getCookie('session');
 	if (!GSessionID) { GSessionID = HTTPRequestSend(ServerUrl + "?" + "status" + "=" + "sessionid" + HTTPRequestAntiCache()); }
@@ -125,8 +124,7 @@ function init(){
     ampUi.globalSettings.freqSlider.addEventListener("touchstart", startTouch, false);
     ampUi.globalSettings.freqSlider.addEventListener("mousedown", startSlide, false);
 
-    ampUi.globalSettings.qSlider = document.getElementById("qsilder");	
-    console.log(ampUi.globalSettings.qSlider);
+    ampUi.globalSettings.qSlider = document.getElementById("qsilder");	    
     ampUi.globalSettings.qSlider.addEventListener("touchstart", startTouch, false);
     ampUi.globalSettings.qSlider.addEventListener("mousedown", startSlide, false);
 
@@ -177,7 +175,7 @@ function InitChannels(data){
     
     mixname = WebqueryVariableValue(data, "mix");
         
-	var mixselector = document.getElementById('menu');
+    var mixselector = document.getElementById('mixselect');
 	while (mixselector.firstChild) {
 		mixselector.removeChild(mixselector.firstChild);
 	  }
@@ -185,15 +183,17 @@ function InitChannels(data){
 	var mixarray = WebqueryVariableValue(data, "ma").split("|");
 	for (var i=0, len = mixarray.length; i < len-1; i++) {	
 		var mixentry = mixarray[i].split("^");        
-		var node = document.createElement("div");
-		node.setAttribute("name", mixentry[0]);
-		node.innerHTML = mixentry[1];
-        node.addEventListener('click', function (event) {			
-            console.log(event.target.getAttribute("name"));
-			ServerRequestSend("status","set_mix&mix=" + event.target.getAttribute("name"));
-		})
+        var node = document.createElement('option');
+        node.appendChild(document.createTextNode(mixentry[1]));
+        node.value = mixentry[0];
 		mixselector.appendChild(node);
-	}
+    }
+
+    if (mixVal != null)
+        mixselector.value = mixVal;
+    else
+        mixVal = mixselector.value;
+
 	GEq = [];
 	type1= WebqueryVariableValue(data,"only"); 
 	for (var i = 0; i < GChannelCount; i++){
@@ -232,7 +232,8 @@ function InitChannels(data){
 	 resizeFunc();    
 }
 
-function AddChannel(channelnumber, channelcaption, channeltype, showpan, colr, chnum){
+function AddChannel(channelnumber, channelcaption, channeltype, showpan, colr, chnum) {
+    
 	var mainconsole1 = document.getElementById("ClassMainConsole");
 	
 	// Console 
@@ -258,7 +259,8 @@ function AddChannel(channelnumber, channelcaption, channeltype, showpan, colr, c
 			ampUi.globalSettings.filtersControllersContext = GEq[index];
 
 			ampUi.channelEdit( ampUi.globalSettings.filtersControllersContext, null, null,	null, null);		
-			modal.style.display = "block";
+            modal.style.display = "block";
+            document.getElementById("eq_title").innerHTML = channelcaption;
 		}
 	});	
 	console1.appendChild(eqbutton1);
@@ -409,7 +411,7 @@ function AddChannel(channelnumber, channelcaption, channeltype, showpan, colr, c
 	var channelnum1 = document.createElement("div");
 	channelnum1.id = "ClassChannelNum" + channelnumber;
 	channelnum1.className = "channel_num";
-	channelnum1.innerHTML = channelnumber+1;
+    channelnum1.innerHTML = chnum;
 	console1.appendChild(channelnum1);
 	
 	// Slider has references to other related elements that are used in slider Events 
@@ -427,8 +429,12 @@ function AddChannel(channelnumber, channelcaption, channeltype, showpan, colr, c
 	}
 	
 	// slider default values 
-	infotext1.innerHTML = "Off";	
-    slider1.style.top = bar1.offsetHeight - slider1.offsetHeight - 8 + "px";
+    infotext1.innerHTML = "Off";	
+    if (GSizeRate == 0)
+        slider1.style.top = bar1.offsetHeight - slider1.offsetHeight - 8 + "px";
+    else
+        slider1.style.top = (bar1.offsetHeight - slider1.offsetHeight - 8) * GSizeRate + "px";
+
 	mutebutton1.checked = false;
 	eqbutton1.checked = false;
 	
@@ -458,7 +464,7 @@ function AddChannel(channelnumber, channelcaption, channeltype, showpan, colr, c
 			panslider1.attachEvent("onmousedown", startSlide, false);
 		mutebutton1.attachEvent("onclick", OnChangeMuteButton, false);		
 	//	eqbutton1.attachEvent("onclick", OnChangeEQButton, false);		
-	}	
+    }	
 }
 
 // EVENTS -----------------------------------------------------------------------------------------
@@ -484,7 +490,7 @@ function EventTargetIE8Compatible(event){
 
 // Fader coordinates adjustments 
 function FadersUpdateOnMove(event, touchEvent){
-    tryToUpdateFaders: {        
+    tryToUpdateFaders: {              
 		mainconsole1 = document.getElementById("ClassMainConsole");	
 		if (touchEvent) {
 			SelectedSliderID = EventTargetIE8Compatible(event).id;
@@ -1363,7 +1369,7 @@ function strcmp ( str1, str2 ) {
 }
 
 function resizeFunc() {
-	//Update Menu and Title bar length    
+	//Update Menu and Title bar length   
     var mainconsole1 = document.getElementById("ClassMainConsole");
     var bfirst = true;
     var originalrate = GSizeRate;
@@ -1372,8 +1378,7 @@ function resizeFunc() {
     if (GChannelCount > 0) {
         for (var i = 0; i < GChannelCount; i++) {                        
 			document.getElementById('ClassConsole' + i).style.height = (document.documentElement.clientHeight - 42) + 'px';
-			console.log('hight= ', document.documentElement.clientHeight);
-
+			
             var selSlider = document.getElementById('fd' + i);            
             var bar1 = document.getElementById(selSlider.customBar);
             var slidergroup1 = document.getElementById(selSlider.customSlidergroup);
@@ -1382,13 +1387,13 @@ function resizeFunc() {
             var originalHeight = selSlider.offsetTop;            
             if (bfirst == false)
                 originalHeight = selSlider.offsetTop / originalrate;
-            
+
             if (GOriginalHeight == 0)
                 GOriginalHeight = bar1.offsetHeight - 8 - selSlider.offsetHeight;
                         
             GSizeRate = (height - 8 - selSlider.offsetHeight) / GOriginalHeight;
             bar1.style.height = height + 'px';      
-            selSlider.style.top = (originalHeight * GSizeRate) + 'px';            
+            selSlider.style.top = (originalHeight * GSizeRate) + 'px';
 
             var theight = height - 80;
             document.getElementById('ClassDigits' + i).style.height = (height - selSlider.offsetHeight) + 'px';
@@ -1407,5 +1412,11 @@ function resizeFunc() {
 			modalcontent.style.height = document.documentElement.clientHeight + "px";			
 			ampUi.channelEdit( ampUi.globalSettings.filtersControllersContext, null, null,	null, null);		
 		}
-	}
+    }
+}
+
+function serverResponseFunc() {
+    var val = document.getElementById("mixselect").value;
+    ServerRequestSend("status", "set_mix&mix=" + val);
+    mixVal = val;
 }

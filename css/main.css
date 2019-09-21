@@ -32,55 +32,8 @@
 	display: flex;
 }
 
-.dropdown {
-	left: 50px;
-	position: absolute;
-  }
+#mixsel 
   
-  .dropbtn {
-	font-size: 18px;  
-  }
-  .dropdown .dropbtn {
-	border: none;
-	outline: none;
-	color: white;
-	padding: 7px 16px;
-	background-color: inherit;
-	font-family: inherit;
-	margin: 0;
-  }
-
-  .header_logo:hover a:hover, .dropdown:hover .dropbtn {
-	background-color: red;
-  }
-  
-  .dropdown-content {
-	display: none;
-	position: absolute;
-	background-color: #f9f9f9;
-	min-width: 160px;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-	z-index: 200;
-	font-size: 15px;  
-  }
-    
-  .dropdown-content div {
-	float: none;
-	color: black;
-	padding: 4px 12px;
-	text-decoration: none;
-	display: block;
-	text-align: left;
-  }
-  
-  .dropdown-content div:hover {
-	background-color: #ddd;
-  }
-  
-  .dropdown:hover .dropdown-content {
-	display: block;
-  }
-
 
 input[type=button]
 {
@@ -113,20 +66,21 @@ input[type=button]
     z-index: 100;
 float: left; display: block; 
 }
-#mixsel{
+#mixselect {
     color: #101010;
     font-size: 20px;
     font-weight: bold;
-	font-family: Helvetica, Arial, sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
     height: 36px;
-    left: 30px;
+    left: 70px;
     line-height: 35px;
-    position: relative; 
+    position: relative;
     text-align: center;
     top: 2px;
     width: 300px;
     z-index: 20;
-float: left; display: block; 
+    float: left;
+    display: block;
 }
 
 #envsel {
@@ -997,4 +951,13 @@ body {
     position: relative;
     background-size: cover;
     left: 3px;
+}
+
+.eqTitle {
+    position: absolute;
+    left: 35px;
+    color: darkslategrey;
+    font-size: 17px;
+    font-weight: bold;
+    font-family: Helvetica, Arial, sans-serif;
 }

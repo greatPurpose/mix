@@ -1,9 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\css",
     "\\js",
     "\\js\\ampUi"
   ],
-  "SelectedNode": "\\js\\ampUi\\ampUiGlobalSettings.js",
+  "SelectedNode": "\\js\\main.js",
   "PreviewInSolutionExplorer": false
 }
