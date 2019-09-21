@@ -166,7 +166,7 @@ float: left; display: block;
 	display: flex;
 }
 		
-.console{
+.console{	
 	width:80px;	
 	height:360px;
 	position:relative;
@@ -174,7 +174,7 @@ float: left; display: block;
 		url(../images/cbottom.png) bottom no-repeat,
 		url(../images/ctop.png) top no-repeat,
 		url(../images/cbody.png) repeat-y;
-}
+	}
 
 .state_on{
 	width:52px;
@@ -576,8 +576,8 @@ float: left; display: block;
 }
 
 .chanel_name{
-	left:-133px;
-	top:-58px;
+	left:-135px;
+	top:-56px;
 	position:relative;
 		-moz-transform: rotate(270deg);
 		-webkit-transform: rotate(270deg);
@@ -913,6 +913,7 @@ body {
 }
 
 .modal {
+    
 	display: block; /* Hidden by default */
 	position: fixed; /* Stay in place */
 	z-index: 1000; /* Sit on top */	
@@ -923,13 +924,14 @@ body {
   }
   
   /* Modal Content */
-  .modal-content {
-	background-color: #fefefe;
-	margin: auto;
-	padding: 1px;
-	border: 1px solid #888;	
-	top:0px;
-  }
+.modal-content {
+    
+    background-color: #fefefe;
+    margin: auto;
+    padding: 1px;
+    border: 1px solid #888;
+    top: 0px;
+}
   
   /* The Close Button */
   .close {
@@ -945,3 +947,54 @@ body {
 	text-decoration: none;
 	cursor: pointer;
   }
+
+.eq_console {
+    width: 105px;
+    height: 100%;
+    position: relative;
+    left:16px;
+
+}
+
+.eq_bar {
+    width: 35px;
+    height: 100%;
+    float: left;
+    background-size: cover;
+    background: url(../images/bar_bottom.png) bottom no-repeat, url(../images/bar_top.png) top no-repeat, url(../images/bar_bg.png) repeat-y;    
+    position: relative;
+}
+
+
+.f_eqslider {
+    width: 29px;
+    height: 38px;
+    cursor: pointer;
+    background-image: url(../images/master_bar_btn.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    left: 3px;
+}
+
+.q_eqslider {
+    width: 29px;
+    height: 38px;
+    cursor: pointer;
+    background-image: url(../images/bar_btn_green.png);
+    background-repeat: no-repeat;
+    position: relative;
+    background-size: cover;
+    left: 3px;
+}
+
+.g_eqslider {
+    width: 29px;
+    height: 38px;
+    cursor: pointer;
+    background-image: url(../images/bar_btn_blue.png);
+    background-repeat: no-repeat;
+    position: relative;
+    background-size: cover;
+    left: 3px;
+}

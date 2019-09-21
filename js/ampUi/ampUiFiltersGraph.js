@@ -1,11 +1,11 @@
 ampUi.FiltersGraph = function(controllersContext) {
-	var _controllersContext = controllersContext; // Global context
-
+    var _controllersContext = controllersContext; // Global context
+    
 	var _graphContext = this;
 	this.containerJq =  $("#" + ampUi.filtersGraphSettings.htmlContainerId);
-	$(this.containerJq).width($(window).width());
+	$(this.containerJq).width($(window).width()-100);
 	$(this.containerJq).height($(window).height()-30);
-	_graphContext.containerWidth = $(window).width();
+	_graphContext.containerWidth = $(window).width()-100;
 	_graphContext.containerHeight = $(window).height()-30;
 
 	this.containerWidth = $(this.containerJq).width(); // Overall width and height

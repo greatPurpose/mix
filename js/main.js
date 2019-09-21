@@ -120,6 +120,20 @@ function init(){
 		selEqIndex = -1;
 		modal.style.display = "none";
 	};
+	
+    ampUi.globalSettings.freqSlider = document.getElementById("freqsilder");
+    ampUi.globalSettings.freqSlider.addEventListener("touchstart", startTouch, false);
+    ampUi.globalSettings.freqSlider.addEventListener("mousedown", startSlide, false);
+
+    ampUi.globalSettings.qSlider = document.getElementById("qsilder");	
+    console.log(ampUi.globalSettings.qSlider);
+    ampUi.globalSettings.qSlider.addEventListener("touchstart", startTouch, false);
+    ampUi.globalSettings.qSlider.addEventListener("mousedown", startSlide, false);
+
+	ampUi.globalSettings.gainSlider = document.getElementById("gainsilder");
+    ampUi.globalSettings.gainSlider.addEventListener("touchstart", startTouch, false);
+    ampUi.globalSettings.gainSlider.addEventListener("mousedown", startSlide, false);
+
 	// Adjust header width
 	//nowrapper1 = document.getElementById("ClassNoWrapper");
 	//nowrapper1.style.width = 80 * GChannelCount + "px";	
@@ -128,6 +142,8 @@ function init(){
 	setMeterUpdateAndControlSyncInterval();
 	
 }
+
+
 function setMeterUpdateAndControlSyncInterval(){
 	GSendMetersUpdateTimer = setInterval(SendMetersUpdate, GMetersUpdateRate);
 	GSendControlsSyncTimer = setInterval(SyncControlsUpdate, GControlsSyncRate);
@@ -200,14 +216,14 @@ function InitChannels(data){
 			gain: 23,
 			pan: -32,
 			filters: {
-				highPass: { frequency: 0, gain: 0, quality: 1, active: true },
-				lowShelf: { frequency: 40, gain: 0, quality: 1, active: true },
-				peakOne: { frequency: 100, gain: 0, quality: 1, active: true },
-				peakTwo: { frequency: 200, gain: 0, quality: 1, active: true },
-				peakThree: { frequency: 400, gain: 0, quality: 1, active: true },
-				peakFour: { frequency: 2000, gain: 0, quality: 1, active: true },
-				highShelf: { frequency: 7000, gain: 0, quality: 1, active: true },
-				lowPass: { frequency: 10000, gain: 0, quality: 1, active: true },
+				highPass: { frequency: 0, gain: 0, quality: 1, active: true},
+                lowShelf: { frequency: 40, gain: 0, quality: 1, active: true},
+                peakOne: { frequency: 100, gain: 0, quality: 1, active: true},
+                peakTwo: { frequency: 200, gain: 0, quality: 1, active: true},
+                peakThree: { frequency: 400, gain: 0, quality: 1, active: true},
+                peakFour: { frequency: 2000, gain: 0, quality: 1, active: true},
+                highShelf: { frequency: 7000, gain: 0, quality: 1, active: true},
+                lowPass: { frequency: 10000, gain: 0, quality: 1, active: true},
 			},
 			active: true 
 		};
@@ -613,6 +629,109 @@ function PansUpdateOnMove(event, touchEvent){
 	}
 }
 
+function FreqUpdateOnMove(event, touchEvent) {
+    tryToUpdateFaders: {
+        if (touchEvent) {
+            SelectedSliderID = EventTargetIE8Compatible(event).id;
+            SelectedSlider = document.getElementById(SelectedSliderID);
+        }
+        else {
+            SelectedSliderID = GSelectedSliderID;
+            SelectedSlider = GSelectedSlider;
+        }
+
+        var bar1 = document.getElementById("feq_bar");
+        
+        if (touchEvent) {
+            clienty1 = event.changedTouches[0].clientY + document.documentElement.scrollTop + document.body.scrollTop;
+        }
+        else {
+            clienty1 = event.clientY + document.documentElement.scrollTop + document.body.scrollTop;
+        }
+        
+        var relativeheight1 = bar1.offsetHeight - 8;
+        var bottom1 = relativeheight1 - SelectedSlider.offsetHeight;
+        var slider_top = clienty1 - SelectedSlider.offsetHeight / 2;
+        if (slider_top < 0) {
+            SelectedSlider.style.top = 0;
+        } else if (slider_top < bottom1) {
+            SelectedSlider.style.top = slider_top + "px";
+        } else {
+            SelectedSlider.style.top = bottom1 + "px";
+        }
+        console.log(ampUi.globalSettings.filtersControllersContext);
+    }
+}
+
+function QUpdateOnMove(event, touchEvent) {
+    tryToUpdateFaders: {
+        if (touchEvent) {
+            SelectedSliderID = EventTargetIE8Compatible(event).id;
+            SelectedSlider = document.getElementById(SelectedSliderID);
+        }
+        else {
+            SelectedSliderID = GSelectedSliderID;
+            SelectedSlider = GSelectedSlider;
+        }
+
+        var bar1 = document.getElementById("qeq_bar");
+
+        if (touchEvent) {
+            clienty1 = event.changedTouches[0].clientY + document.documentElement.scrollTop + document.body.scrollTop;
+        }
+        else {
+            clienty1 = event.clientY + document.documentElement.scrollTop + document.body.scrollTop;
+        }
+
+        var relativeheight1 = bar1.offsetHeight - 8;
+        var bottom1 = relativeheight1 - SelectedSlider.offsetHeight;
+        var slider_top = clienty1 - SelectedSlider.offsetHeight / 2;
+        if (slider_top < 0) {
+            SelectedSlider.style.top = 0;
+        } else if (slider_top < bottom1) {
+            SelectedSlider.style.top = slider_top + "px";
+        } else {
+            SelectedSlider.style.top = bottom1 + "px";
+        }
+
+    }
+}
+
+function GainUpdateOnMove(event, touchEvent) {
+    tryToUpdateFaders: {
+        if (touchEvent) {
+            SelectedSliderID = EventTargetIE8Compatible(event).id;
+            SelectedSlider = document.getElementById(SelectedSliderID);
+        }
+        else {
+            SelectedSliderID = GSelectedSliderID;
+            SelectedSlider = GSelectedSlider;
+        }
+
+        var bar1 = document.getElementById("geq_bar");
+
+        if (touchEvent) {
+            clienty1 = event.changedTouches[0].clientY + document.documentElement.scrollTop + document.body.scrollTop;
+        }
+        else {
+            clienty1 = event.clientY + document.documentElement.scrollTop + document.body.scrollTop;
+        }
+
+        var relativeheight1 = bar1.offsetHeight - 8;
+        var bottom1 = relativeheight1 - SelectedSlider.offsetHeight;
+        var slider_top = clienty1 - SelectedSlider.offsetHeight / 2;
+        if (slider_top < 0) {
+            SelectedSlider.style.top = 0;
+        } else if (slider_top < bottom1) {
+            SelectedSlider.style.top = slider_top + "px";
+        } else {
+            SelectedSlider.style.top = bottom1 + "px";
+        }
+
+    }
+}
+
+
 // MOUSE EVENTS	
 // Slider mouseup, mousedown and move
 function startSlide(event){
@@ -672,12 +791,35 @@ function stopSlide(event){
 
 function moveSlide(event){
 	if (GSelectedSliderClass) { // move initiated by mouse
-		if (GSelectedSliderClass == "pan_slider")
-			PansUpdateOnMove(event, 0);
-		else
-			FadersUpdateOnMove(event, 0);
+        if (GSelectedSliderClass == "pan_slider") {
+            PansUpdateOnMove(event, 0);
+            return;
+        }
+            
+
+        if (GSelectedSliderClass == "slider") {
+            FadersUpdateOnMove(event, 0);
+            return;
+        }
+            
+
+        if (GSelectedSliderClass == "f_eqslider") {
+            FreqUpdateOnMove(event, 0);
+            return;
+        }
+
+        if (GSelectedSliderClass == "q_eqslider") {
+            QUpdateOnMove(event, 0);
+            return;
+        }
+
+        if (GSelectedSliderClass == "g_eqslider") {
+            GainUpdateOnMove(event, 0);
+            return;
+        }
 	}
-	else { // move initiated by touch
+    else
+    { // move initiated by touch
 		SelectedSliderID = EventTargetIE8Compatible(event).id;
 		SelectedSlider = document.getElementById(SelectedSliderID);
 		
@@ -686,14 +828,30 @@ function moveSlide(event){
 			
 			if (SelectedSliderClass == "pan_slider") {
 				if (GPanActive[SelectedSliderID.substring(2)] == true) { 
-					PansUpdateOnMove(event, 0); 
+                    PansUpdateOnMove(event, 0);
+                    return;
 				}
 			}
-			else {
+            if (SelectedSliderClass == "slider") {
                 if (GFaderActive[SelectedSliderID.substring(2)] == true) {                     
-					FadersUpdateOnMove(event, 0); 
+                    FadersUpdateOnMove(event, 0); 
+                    return;
 				}
-			}
+            }
+            if (SelectedSliderClass == "f_eqslider") {
+                FreqUpdateOnMove(event, 0);
+                return;
+            }
+
+            if (SelectedSliderClass == "q_eqslider") {
+                QUpdateOnMove(event, 0);
+                return;
+            }
+
+            if (SelectedSliderClass == "g_eqslider") {
+                GainUpdateOnMove(event, 0);
+                return;
+            }
 		}
 	}
 }	
@@ -721,14 +879,29 @@ function startTouch(event){
 	SelectedSlider.addEventListener("touchcancel", stopTouch, false);
 	SelectedSlider.addEventListener("touchend", stopTouch, false);
 	
-	if (strcmp(SelectedSliderID.substring(0,2), "fd") == 0) {
-		GFaderActive[SelectedSliderID.substring(2)] = true;
-		console.log("Fader "+SelectedSliderID.substring(2)+" active");
-	}
-	else if (strcmp(SelectedSliderID.substring(0,2), "pn") == 0) {
-		GPanActive[SelectedSliderID.substring(2)] = true;
-		console.log("Pan "+SelectedSliderID.substring(2)+" active");
-	}			
+    if (strcmp(SelectedSliderID.substring(0, 2), "fd") == 0) {
+        GFaderActive[SelectedSliderID.substring(2)] = true;
+        console.log("Fader " + SelectedSliderID.substring(2) + " active");
+        return;
+    }
+
+    if (strcmp(SelectedSliderID.substring(0, 2), "pn") == 0) {
+        GPanActive[SelectedSliderID.substring(2)] = true;
+        console.log("Pan " + SelectedSliderID.substring(2) + " active");
+        return;
+    }
+
+    if (strcmp(SelectedSliderID, "freqsilder") == 0) {
+        return;
+    }
+
+    if (strcmp(SelectedSliderID, "qsilder") == 0) {
+        return;
+    }
+
+    if (strcmp(SelectedSliderID, "gainsilder") == 0) {
+        return;
+    }
 }
 
 function stopTouch(event){
@@ -748,12 +921,27 @@ function stopTouch(event){
 	
 	if (strcmp(SelectedSliderID.substring(0,2), "fd") == 0) {
 		GFaderActive[SelectedSliderID.substring(2)] = false;
-		console.log("Fader "+SelectedSliderID.substring(2)+" inactive");
+        console.log("Fader " + SelectedSliderID.substring(2) + " inactive");
+        return;
 	}
-	else if (strcmp(SelectedSliderID.substring(0,2), "pn") == 0) {
+
+    if (strcmp(SelectedSliderID.substring(0, 2), "pn") == 0) {
 		GPanActive[SelectedSliderID.substring(2)] = false;
-		console.log("Pan "+SelectedSliderID.substring(2)+" inactive");
-	}
+        console.log("Pan " + SelectedSliderID.substring(2) + " inactive");
+        return;
+    }
+
+    if (strcmp(SelectedSliderID, "freqsilder") == 0) {
+        return;
+    }
+
+    if (strcmp(SelectedSliderID, "qsilder") == 0) {
+        return;
+    }
+
+    if (strcmp(SelectedSliderID, "gainsilder") == 0) {
+        return;
+    }
 }
 
 function moveTouch(event){	
@@ -763,10 +951,31 @@ function moveTouch(event){
 	SelectedSlider = document.getElementById(SelectedSliderID);
 	SelectedSliderClass = SelectedSlider.className;
 
-	if (SelectedSliderClass == "pan_slider" && GPanActive[SelectedSliderID.substring(2)]) // make sure last Slider value sent
-		PansUpdateOnMove(event, 1);
-	else if (GFaderActive[SelectedSliderID.substring(2)])
-		FadersUpdateOnMove(event, 1); 
+    if (SelectedSliderClass == "pan_slider" && GPanActive[SelectedSliderID.substring(2)]) // make sure last Slider value sent
+    {
+        PansUpdateOnMove(event, 1);
+        return;
+    }
+		
+    if (SelectedSliderClass == "slider" && GFaderActive[SelectedSliderID.substring(2)]) {
+        FadersUpdateOnMove(event, 1);
+        return;
+    }
+        
+    if (strcmp(SelectedSliderID, "freqsilder") == 0) {
+        FreqUpdateOnMove(event, 1);
+        return;
+    }
+
+    if (strcmp(SelectedSliderID, "qsilder") == 0) {
+        QUpdateOnMove(event, 1);
+        return;
+    }
+
+    if (strcmp(SelectedSliderID, "gainsilder") == 0) {
+        GainUpdateOnMove(event, 1);
+        return;
+    }
 }
 
 // Mute Button click 
@@ -964,23 +1173,6 @@ function ServerResponseReceiveNoWorkers(data){
 						}
 					}
 				}		
-
-				// EQ Button 
-				/*var buttonname1 = "ClassEQButton" + i;
-				var buttonvalue1 = WebqueryVariableValue(data, buttonname1.toLowerCase());
-				if (buttonvalue1)
-				{								
-					var button1 = document.getElementById(buttonname1);
-					if (button1){	
-						checked1 = buttonvalue1 == "true";
-						if (checked1 != button1.checked){
-							var	mutechanged1 = buttonname1 + '=' + checked1;	
-							button1.checked = checked1;						
-							EQButtonImageUpdate(button1);				
-						}
-					}
-				}*/	
-				
             }            
 		}
 	}				
@@ -1012,13 +1204,7 @@ function ServerResponseReceiveNoWorkers(data){
 				debugconsolelog1.innerHTML = panchanged1 + "<br>" + debugconsolelog1.innerHTML;				
 			if (mutechanged1)
 				debugconsolelog1.innerHTML = mutechanged1 + "<br>" + debugconsolelog1.innerHTML;				
-		}/*else{
-			// reacts on internal controls update 		
-			if ((data.search("fd") != -1) || 
-					(data.search("pn") != -1) ||
-					(data.search("mu") != -1))							
-				debugconsolelog1.innerHTML = data + "<br>" + debugconsolelog1.innerHTML;						
-		}*/
+		}
 	}		
 }		
 

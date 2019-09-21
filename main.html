@@ -89,18 +89,31 @@
         <div id="eqModalContent" class="modal-content">
             <span class="close">&times;</span>
             <div class="container-fluid h-100">
-                    <div class="row justify-content-center h-100">
-                        <div class="col-12 bg-red">
-                            <div class="h-100 d-flex flex-nowrap flex-column ">
-                                <div class="row justify-content-center flex-fill flex-grow-1 flex-nowrap">
-                                    <div class="d-flex flex-nowrap flex-column text-truncate flex-fill">
-                                        <div class="row flex-grow-1 m-0 p-0">
-                                            <div id="graph-container" class="d-flex flex-column text-truncate flex-fill col-12 m-0 p-0" style="background:black;"></div>
-                                        </div>
+                <div class="row justify-content-center h-100">
+                    <div style="width:calc(100%-120px);">
+                        <div class="h-100 d-flex flex-nowrap flex-column ">
+                            <div class="row justify-content-center flex-fill flex-grow-1 flex-nowrap">
+                                <div class="d-flex flex-nowrap flex-column text-truncate flex-fill">
+                                    <div class="row flex-grow-1 m-0 p-0">
+                                        <div id="graph-container" class="d-flex flex-column text-truncate flex-fill col-12 m-0 p-0" style="background:black;"></div>
                                     </div>
                                 </div>
                             </div>
-                        </div>            
+                        </div>
+                    </div>    
+                    <div style="width:120px;">                       
+                        <div id ="" class="eq_console">                            
+                            <div id="feq_bar" class="eq_bar">
+                                <div id="freqsilder" class="f_eqslider"></div>
+                            </div>
+                            <div id="qeq_bar" class="eq_bar">
+                                <div id="qsilder" class="q_eqslider"></div>
+                            </div>
+                            <div id="geq_bar" class="eq_bar">
+                                <div id="gainsilder" class="g_eqslider"></div>
+                            </div>                            
+                        </div>                         
+                    </div>        
                 </div>
             </div>
         </div>

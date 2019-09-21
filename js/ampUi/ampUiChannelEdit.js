@@ -16,8 +16,9 @@ ampUi.channelEdit = function(
 		filtersControllersContext.controllers = {};
 		filtersControllersContext.previouslySelectedController = null;
 		filtersControllersContext.currentlySelectedController = null;
-		filtersControllersContext.selectedControllerChanged = [];
-		filtersControllersContext.triggerSelectedControllerChanged = function() { for(var item in this.selectedControllerChanged) this.selectedControllerChanged[item](); };
+        filtersControllersContext.selectedControllerChanged = [];
+        filtersControllersContext.triggerSelectedControllerChanged = function () {   };
+
 		for(var item in channelObject.filters) {
 			filtersControllersContext.controllers[item] = {  // Fill filters controllers with initial data
 				name: item, // Filter unique name 
@@ -30,9 +31,20 @@ ampUi.channelEdit = function(
 					qualityChanged: [],
 					stateChanged: []
 				}
-			};
-            filtersControllersContext.controllers[item].eventsContext.triggerFrequencyChanged = function () { for (var item in this.frequencyChanged) this.frequencyChanged[item](); };
-            filtersControllersContext.controllers[item].eventsContext.triggerGainChanged = function () { for (var item in this.gainChanged) this.gainChanged[item](); }
+            };
+            filtersControllersContext.controllers[item].eventsContext.triggerFrequencyChanged = function () {                
+                var currentController = filtersControllersContext.currentlySelectedController;
+                if (currentController != null)
+					$(ampUi.globalSettings.freqSlider).css('top', ((1 - currentController.data.frequency / 20000) * filtersGraph.containerHeight) + 'px');                
+			
+				for (var item in this.frequencyChanged) this.frequencyChanged[item]();
+            };
+            filtersControllersContext.controllers[item].eventsContext.triggerGainChanged = function () {
+                var currentController = filtersControllersContext.currentlySelectedController;                
+                if (currentController != null)
+					$(ampUi.globalSettings.gainSlider).css('top', ((1 - (currentController.data.gain + 30) / 50) * filtersGraph.containerHeight) + 'px');     
+				for (var item in this.gainChanged) this.gainChanged[item]();
+            };
             filtersControllersContext.controllers[item].eventsContext.triggerQualityChanged = function () { for (var item in this.qualityChanged) this.qualityChanged[item](); }
             filtersControllersContext.controllers[item].eventsContext.triggerStateChanged = function () { for (var item in this.stateChanged) this.stateChanged[item](); }
 		}
@@ -48,6 +60,6 @@ ampUi.channelEdit = function(
 			controller.eventsContext.triggerFrequencyChanged();
 			controller.eventsContext.triggerGainChanged();
 			controller.eventsContext.triggerQualityChanged();
-			controller.eventsContext.triggerStateChanged();
-    }    
+            controller.eventsContext.triggerStateChanged();            
+        }    
 };

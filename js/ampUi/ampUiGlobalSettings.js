@@ -34,3 +34,7 @@ ampUi.globalSettings.panSliderStrokeWidth = 2;
 ampUi.globalSettings.meterRectangleHeight = 2;
 // -- Each channel meter
 ampUi.globalSettings.filtersControllersContext = {};
+
+ampUi.globalSettings.freqSlider = null;
+ampUi.globalSettings.qSlider = null;
+ampUi.globalSettings.gainSlider = null;
