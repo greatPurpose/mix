@@ -188,7 +188,8 @@ function InitChannels(data){
 		var node = document.createElement("div");
 		node.setAttribute("name", mixentry[0]);
 		node.innerHTML = mixentry[1];
-		node.addEventListener('click', function(event){			
+        node.addEventListener('click', function (event) {			
+            console.log(event.target.getAttribute("name"));
 			ServerRequestSend("status","set_mix&mix=" + event.target.getAttribute("name"));
 		})
 		mixselector.appendChild(node);
@@ -216,14 +217,14 @@ function InitChannels(data){
 			gain: 23,
 			pan: -32,
 			filters: {
-				highPass: { frequency: 0, gain: 0, quality: 1, active: true},
-                lowShelf: { frequency: 40, gain: 0, quality: 1, active: true},
-                peakOne: { frequency: 100, gain: 0, quality: 1, active: true},
-                peakTwo: { frequency: 200, gain: 0, quality: 1, active: true},
-                peakThree: { frequency: 400, gain: 0, quality: 1, active: true},
-                peakFour: { frequency: 2000, gain: 0, quality: 1, active: true},
-                highShelf: { frequency: 7000, gain: 0, quality: 1, active: true},
-                lowPass: { frequency: 10000, gain: 0, quality: 1, active: true},
+				highPass: { frequency: 0, gain: 0, quality: 1, active: true, selected: false},
+                lowShelf: { frequency: 40, gain: 0, quality: 1, active: true, selected: false},
+                peakOne: { frequency: 100, gain: 0, quality: 1, active: true, selected: false},
+                peakTwo: { frequency: 200, gain: 0, quality: 1, active: true, selected: false},
+                peakThree: { frequency: 400, gain: 0, quality: 1, active: true, selected: false},
+                peakFour: { frequency: 2000, gain: 0, quality: 1, active: true, selected: false},
+                highShelf: { frequency: 7000, gain: 0, quality: 1, active: true, selected: false},
+                lowPass: { frequency: 10000, gain: 0, quality: 1, active: true, selected: false},
 			},
 			active: true 
 		};
@@ -658,8 +659,20 @@ function FreqUpdateOnMove(event, touchEvent) {
             SelectedSlider.style.top = slider_top + "px";
         } else {
             SelectedSlider.style.top = bottom1 + "px";
-        }
-        console.log(ampUi.globalSettings.filtersControllersContext);
+		}
+
+		for( var item in ampUi.globalSettings.filtersControllersContext.filters){
+			var controller = ampUi.globalSettings.filtersControllersContext.filters[item];
+            if (controller.selected == true) {	
+                var rfq = 1 - slider_top / (relativeheight1 - 30);
+                if (rfq < 0) rfq = 0;
+                if (rfq > 1) rfq = 1;
+                
+                controller.frequency = rfq * 20000;
+				ampUi.channelEdit( ampUi.globalSettings.filtersControllersContext, null, null,	null, null);		
+				break;
+			}	
+		}
     }
 }
 
@@ -693,7 +706,18 @@ function QUpdateOnMove(event, touchEvent) {
         } else {
             SelectedSlider.style.top = bottom1 + "px";
         }
+		for( var item in ampUi.globalSettings.filtersControllersContext.filters){
+			var controller = ampUi.globalSettings.filtersControllersContext.filters[item];
+            if (controller.selected == true) {				
+                var rfq = 1 - slider_top / (relativeheight1 - 30);
+                if (rfq < 0) rfq = 0.01;
+                if (rfq > 1) rfq = 1;
 
+                controller.quality = rfq;
+				ampUi.channelEdit( ampUi.globalSettings.filtersControllersContext, null, null,	null, null);		
+				break;
+			}	
+		}
     }
 }
 
@@ -727,7 +751,18 @@ function GainUpdateOnMove(event, touchEvent) {
         } else {
             SelectedSlider.style.top = bottom1 + "px";
         }
+		for( var item in ampUi.globalSettings.filtersControllersContext.filters){
+			var controller = ampUi.globalSettings.filtersControllersContext.filters[item];
+			if (controller.selected == true){				
+                var rfq = 1 - slider_top / (relativeheight1 - 30);
+                if (rfq < 0) rfq = 0;
+                if (rfq > 1) rfq = 1;
 
+                controller.gain = rfq * 50 - 30;
+				ampUi.channelEdit( ampUi.globalSettings.filtersControllersContext, null, null,	null, null);		
+				break;
+			}	
+		}
     }
 }
 

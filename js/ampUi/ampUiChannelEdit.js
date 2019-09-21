@@ -16,8 +16,32 @@ ampUi.channelEdit = function(
 		filtersControllersContext.controllers = {};
 		filtersControllersContext.previouslySelectedController = null;
 		filtersControllersContext.currentlySelectedController = null;
-        filtersControllersContext.selectedControllerChanged = [];
-        filtersControllersContext.triggerSelectedControllerChanged = function () {   };
+    filtersControllersContext.selectedControllerChanged = [];
+
+        filtersControllersContext.triggerSelectedControllerChanged = function () {   
+			if (filtersControllersContext.previouslySelectedController != null)
+				filtersControllersContext.previouslySelectedController.data.selected = false;
+            
+            var currentController = filtersControllersContext.currentlySelectedController;            
+            if (currentController != null) {
+                currentController.data.selected = true;
+
+                var ht = (1 - currentController.data.frequency / 20000) * filtersGraph.containerHeight;
+                if (ht < 0) ht = 0;
+                if (ht > (filtersGraph.containerHeight - 38)) ht = filtersGraph.containerHeight - 38;
+                $(ampUi.globalSettings.freqSlider).css('top', ht + 'px');
+
+                ht = (1 - (currentController.data.gain + 30) / 50) * filtersGraph.containerHeight;
+                if (ht < 0) ht = 0;
+                if (ht > (filtersGraph.containerHeight - 38)) ht = filtersGraph.containerHeight - 38;
+                $(ampUi.globalSettings.gainSlider).css('top', ht + 'px'); 
+
+                ht = (1 - currentController.data.quality) * filtersGraph.containerHeight;
+                if (ht < 0) ht = 0;
+                if (ht > (filtersGraph.containerHeight - 38)) ht = filtersGraph.containerHeight - 38;
+                $(ampUi.globalSettings.qSlider).css('top', ht + 'px');
+            }	
+		};
 
 		for(var item in channelObject.filters) {
 			filtersControllersContext.controllers[item] = {  // Fill filters controllers with initial data
@@ -34,18 +58,39 @@ ampUi.channelEdit = function(
             };
             filtersControllersContext.controllers[item].eventsContext.triggerFrequencyChanged = function () {                
                 var currentController = filtersControllersContext.currentlySelectedController;
-                if (currentController != null)
-					$(ampUi.globalSettings.freqSlider).css('top', ((1 - currentController.data.frequency / 20000) * filtersGraph.containerHeight) + 'px');                
+                if (currentController != null) {
+                    var ht = (1 - currentController.data.frequency / 20000) * filtersGraph.containerHeight;
+                    if (ht < 0)  ht = 0;
+                    if (ht > (filtersGraph.containerHeight - 38)) ht = filtersGraph.containerHeight - 38;
+                    $(ampUi.globalSettings.freqSlider).css('top', ht + 'px');                
+                }					
 			
 				for (var item in this.frequencyChanged) this.frequencyChanged[item]();
             };
+
             filtersControllersContext.controllers[item].eventsContext.triggerGainChanged = function () {
                 var currentController = filtersControllersContext.currentlySelectedController;                
-                if (currentController != null)
-					$(ampUi.globalSettings.gainSlider).css('top', ((1 - (currentController.data.gain + 30) / 50) * filtersGraph.containerHeight) + 'px');     
+                if (currentController != null) {
+                    var ht = (1 - (currentController.data.gain + 30) / 50) * filtersGraph.containerHeight; 
+                    if (ht < 0) ht = 0;
+                    if (ht > (filtersGraph.containerHeight - 38)) ht = filtersGraph.containerHeight - 38;
+                    $(ampUi.globalSettings.gainSlider).css('top', ht + 'px');  
+                }
+					
 				for (var item in this.gainChanged) this.gainChanged[item]();
             };
-            filtersControllersContext.controllers[item].eventsContext.triggerQualityChanged = function () { for (var item in this.qualityChanged) this.qualityChanged[item](); }
+
+            filtersControllersContext.controllers[item].eventsContext.triggerQualityChanged = function () {
+                var currentController = filtersControllersContext.currentlySelectedController;
+                if (currentController != null) {
+                    var ht = (1 - currentController.data.quality) * filtersGraph.containerHeight;
+                    if (ht < 0) ht = 0;
+                    if (ht > (filtersGraph.containerHeight - 38)) ht = filtersGraph.containerHeight - 38;
+                    $(ampUi.globalSettings.qSlider).css('top', ht + 'px');
+                }
+
+                for (var item in this.qualityChanged) this.qualityChanged[item]();
+            }
             filtersControllersContext.controllers[item].eventsContext.triggerStateChanged = function () { for (var item in this.stateChanged) this.stateChanged[item](); }
 		}
 		// -- Instantiate filters controllers 	
